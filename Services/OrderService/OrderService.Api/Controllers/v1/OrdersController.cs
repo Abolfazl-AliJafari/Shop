@@ -11,6 +11,10 @@ public class OrdersController(ISender sender) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateOrder([FromBody]CreateOrderVM order,CancellationToken cancellationToken)
     {
+        if (order.ProductCount <= 0)
+        {
+            return BadRequest("Product count must be greater than 0");
+        }
         var command = order.ToCommand();
         var result = await sender.Send(command, cancellationToken);
         return Ok(result);
